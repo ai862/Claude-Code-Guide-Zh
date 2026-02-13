@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Claude Code 完整指南</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="description" content="Claude Code 完整指南 - 从入门到精通">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="lib/css/vue.css">
+  <style>
+    /* 侧边栏样式 */
+    .sidebar {
+      background-color: #f8f9fa;
+    }
+
+    .sidebar-nav > ul > li > a {
+      font-weight: 600;
+      font-size: 1.05em;
+      color: #333;
+    }
+
+    .sidebar-nav li {
+      margin: 0.25em 0;
+    }
+
+    .sidebar-nav ul {
+      padding-left: 0;
+    }
+
+    .sidebar-nav li > ul {
+      padding-left: 1rem;
+    }
+
+    /* 侧边栏链接样式 */
+    .sidebar-nav a {
+      color: #555;
+      text-decoration: none;
+    }
+
+    .sidebar-nav a:hover {
+      color: #42b983;
+    }
+
+    /* 当前激活的链接 */
+    .sidebar-nav li.active > a {
+      color: #42b983;
+      font-weight: 600;
+    }
+
+    /* 内容区域样式 */
+    .content {
+      padding-top: 0;
+    }
+
+    /* 右侧 TOC 样式 */
+    .page_toc {
+      position: fixed;
+      right: 20px;
+      top: 100px;
+      max-width: 200px;
+      max-height: calc(100vh - 150px);
+      overflow-y: auto;
+      background: #fff;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      border: 1px solid #eaecef;
+      z-index: 999;
+    }
+
+    .page_toc .title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #eaecef;
+    }
+
+    .page_toc ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .page_toc li {
+      margin: 4px 0;
+    }
+
+    .page_toc a {
+      color: #555;
+      text-decoration: none;
+      font-size: 13px;
+      display: block;
+      padding: 3px 0;
+      line-height: 1.5;
+    }
+
+    .page_toc a:hover {
+      color: #42b983;
+    }
+
+    .page_toc .toc-level-1 {
+      padding-left: 0;
+    }
+
+    .page_toc .toc-level-2 {
+      padding-left: 12px;
+    }
+
+    .page_toc .toc-level-3 {
+      padding-left: 24px;
+    }
+
+    .page_toc .toc-level-4 {
+      padding-left: 36px;
+    }
+
+    /* 移动端隐藏 TOC */
+    @media (max-width: 1200px) {
+      .page_toc {
+        display: none;
+      }
+    }
+
+    /* 首页卡片样式 */
+    .nav-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 20px 0;
+    }
+
+    .nav-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      padding: 24px;
+      color: white;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      display: block;
+    }
+
+    .nav-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    .nav-card h3 {
+      margin: 0 0 10px 0;
+      font-size: 1.3em;
+    }
+
+    .nav-card p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 0.95em;
+    }
+
+    .nav-card.blue {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .nav-card.green {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+
+    .nav-card.orange {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .nav-card.purple {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    /* 代码块样式 */
+    pre {
+      border-radius: 6px;
+    }
+
+    /* 分页样式 */
+    .pagination {
+      margin: 3em 0;
+      border-top: 1px solid #eaecef;
+    }
+
+    .pagination-item {
+      padding: 1em 0;
+      color: #42b983;
+    }
+
+    .pagination-item a {
+      color: #42b983;
+      text-decoration: none;
+    }
+
+    .pagination-item a:hover {
+      text-decoration: underline;
+    }
+
+    /* 搜索框样式 */
+    .search input {
+      background-color: #f4f4f4;
+      border-radius: 4px;
+      padding: 8px 12px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">加载中...</div>
+  <script>
+    window.$docsify = {
+      el: '#app',
+      name: '<span style="font-weight:600;">Claude Code 完整指南</span>',
+      repo: '',
+      homepage: '快速导航卡.md',
+      loadSidebar: true,
+      subMaxLevel: 3,
+      autoHeader: true,
+      maxLevel: 4,
+      toc: {
+        scope: '.markdown-section',
+        headings: 'h2,h3,h4,h5,h6',
+        title: '目录'
+      },
+      search: {
+        maxAge: 86400000,
+        paths: 'auto',
+        placeholder: '搜索文档...',
+        noData: '没有找到结果',
+        depth: 6,
+        namespace: 'claude-code-guide'
+      },
+      copyCode: {
+        buttonText: '复制',
+        errorText: '错误',
+        successText: '已复制'
+      },
+      pagination: {
+        previousText: '上一章',
+        nextText: '下一章',
+        crossChapter: true
+      },
+      plugins: [
+        function(hook, vm) {
+          hook.doneEach(function() {
+            // 确保侧边栏正确显示
+            var sidebar = document.querySelector('.sidebar');
+            if (sidebar) {
+              sidebar.style.display = 'block';
+            }
+
+            // 生成右侧 TOC
+            generateTOC();
+          });
+        }
+      ]
+    }
+
+    // 生成右侧 TOC 函数
+    function generateTOC() {
+      var content = document.querySelector('.markdown-section');
+      if (!content) return;
+
+      // 移除已存在的 TOC
+      var existingToc = document.querySelector('.page_toc');
+      if (existingToc) {
+        existingToc.remove();
+      }
+
+      // 获取所有标题
+      var headings = content.querySelectorAll('h2, h3, h4, h5, h6');
+      if (headings.length === 0) return;
+
+      // 创建 TOC 容器
+      var tocDiv = document.createElement('div');
+      tocDiv.className = 'page_toc';
+
+      var title = document.createElement('div');
+      title.className = 'title';
+      title.textContent = '目录';
+      tocDiv.appendChild(title);
+
+      var ul = document.createElement('ul');
+
+      headings.forEach(function(heading) {
+        // 为标题添加 ID（如果没有）
+        if (!heading.id) {
+          var id = heading.textContent.trim().replace(/\s+/g, '-').replace(/[^\w\u4e00-\u9fa5-]/g, '');
+          heading.id = id;
+        }
+
+        var li = document.createElement('li');
+        var level = parseInt(heading.tagName.charAt(1));
+        li.className = 'toc-level-' + (level - 1);
+
+        var link = document.createElement('a');
+        link.href = '#' + heading.id;
+        link.textContent = heading.textContent.trim();
+        link.onclick = function(e) {
+          e.preventDefault();
+          document.getElementById(heading.id).scrollIntoView({ behavior: 'smooth' });
+        };
+
+        li.appendChild(link);
+        ul.appendChild(li);
+      });
+
+      tocDiv.appendChild(ul);
+      document.body.appendChild(tocDiv);
+    }
+  </script>
+  <script src="lib/js/docsify.min.js"></script>
+  <script src="lib/js/search.min.js"></script>
+  <script src="lib/js/docsify-copy-code.min.js"></script>
+  <script src="lib/js/docsify-pagination.min.js"></script>
+  <script src="lib/js/prism-bash.min.js"></script>
+  <script src="lib/js/prism-javascript.min.js"></script>
+  <script src="lib/js/prism-typescript.min.js"></script>
+  <script src="lib/js/prism-json.min.js"></script>
+  <script src="lib/js/prism-yaml.min.js"></script>
+</body>
+</html>
